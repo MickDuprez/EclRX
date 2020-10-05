@@ -1,6 +1,6 @@
 ## Requirements
 Visual Studio 2017 (C++)
-ObjectBRX or ObjectARX SDK to build plugin for AutoCAD or BricsCAD respectively.
+ObjectBRX or ObjectARX SDK to build plugin for AutoCAD or BricsCAD respectively. (BricsCAD V20 current version)
 (Note: current source only setup for BricsCAD at the moment)
 ECL (Embedded Common Lisp) binaries built from source.
 Emacs with Slime for testing and basic IDE (or other editor that can hook up with a swank server)
@@ -16,6 +16,8 @@ To build run the following nmake commands in 'x64 Native Tools Command Prompt fo
 
 To install/create package for distribution (will put built binaries and lib's in a 'package' folder in the ecl source folder)
 >nmake install
+
+After installation, add the ECL home folder to the PATH Environment variable so VS and CAD can find it.
 
 ## Running the plugin
 Build the plugin as you would any other ARX/BRX being sure to fix the inlude and lib directories so that VS can find ECL.
