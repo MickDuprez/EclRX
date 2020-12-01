@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.brx</TargetExt>
-    <IncludePath>C:\build\ECL-debug;$(IncludePath)</IncludePath>
+    <IncludePath>C:\home\build\ECL-debug;$(IncludePath)</IncludePath>
     <LinkIncremental>
     </LinkIncremental>
   </PropertyGroup>
@@ -88,7 +88,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.brx</TargetExt>
-    <IncludePath>C:\build\ECL;$(IncludePath)</IncludePath>
+    <IncludePath>C:\home\build\ECL;$(IncludePath)</IncludePath>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,16 +125,17 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\build\ECL-debug\ecl;C:\build\ECL-debug;C:\CAD\BRX\BRXSDK_V20_2_09\inc;C:\CAD\BRX\BRXSDK_V20_2_09\inc64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\home\build\ECL-debug\ecl;C:\home\build\ECL-debug;C:\home\CAD\BRX\BRXSDK_V20_2_09\inc;C:\home\CAD\BRX\BRXSDK_V20_2_09\inc64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalLibraryDirectories>C:\build\ECL-debug;C:\CAD\BRX\BRXSDK_V20_2_09\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\home\build\ECL-debug;C:\home\CAD\BRX\BRXSDK_V20_2_09\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ecl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference />
@@ -178,7 +180,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\build\ECL\ecl;C:\build\ECL;C:\CAD\BRX\BRXSDK_V20_2_09\inc;C:\CAD\BRX\BRXSDK_V20_2_09\inc64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\home\build\ECL\ecl;C:\home\build\ECL;C:\home\CAD\BRX\BRXSDK_V20_2_09\inc;C:\home\CAD\BRX\BRXSDK_V20_2_09\inc64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <SupportJustMyCode>true</SupportJustMyCode>
     </ClCompile>
@@ -189,10 +191,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalLibraryDirectories>C:\build\ECL;C:\CAD\BRX\BRXSDK_V20_2_09\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\home\build\ECL;C:\home\CAD\BRX\BRXSDK_V20_2_09\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ecl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference />
+    <CustomBuildStep>
+      <Command>copy /Y "$(OutDir)ECL.brx" "C:\ECL_RX\ECL.brx"</Command>
+      <Outputs>$(TargetFileName);%(Outputs)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

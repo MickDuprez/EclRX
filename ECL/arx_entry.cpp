@@ -11,6 +11,7 @@
 
 #include <string>
 #include <iostream>
+
 #include <fstream>
 #include <conio.h>
 #include <stdio.h>
@@ -26,6 +27,7 @@
 #pragma comment(linker,"/EXPORT:acrxGetApiVersion")
 
 //static const WORD MAX_CONSOLE_LINES = 500;
+extern HINSTANCE hDll;
 
 void CreateConsole()
 {
@@ -66,6 +68,13 @@ cl_object cad_prompt() {
 	return ecl_make_integer(1);
 }
 
+std::string GetBrxPath() {
+	TCHAR buffer[2048] = { 0 };
+	GetModuleFileName(hDll, buffer, 2048);
+	std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
+	std::wstring path = std::wstring(buffer).substr(0, pos);
+	return std::string(path.begin(), path.end());
+}
 
 char* argv;
 char** pargv;
@@ -115,7 +124,13 @@ void static startEcl()
 			0,
 			ecl_make_keyword("UTF-8")));
 
-	lisp("(load \"~/initrc.lisp\")", error);
+	// get the location of 'this' dll, our initrc.lisp is in the same folder:
+	char cpath[MAX_PATH] = { 0 };
+	std::string spath("(load \"");
+	spath += (GetBrxPath());
+	spath += "\\initrc.lisp\")";
+
+	lisp(spath, error);
 	// see if anything was put in 'error' cl_object:
 	if (error != NULL) {
 		printf("Error in 'load initrc' call. %s", error->base_string.self);
