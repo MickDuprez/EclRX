@@ -1,5 +1,6 @@
 
 
+
 #include "stdafx.h"
 
 #include <tchar.h>
@@ -11,6 +12,11 @@
 
 #include <string>
 #include <iostream>
+#include <algorithm>
+#include <sstream>
+#include <utility>
+#include <cstring>
+#include <cctype>
 
 #include <fstream>
 #include <conio.h>
@@ -69,28 +75,42 @@ cl_object cad_prompt() {
 }
 
 
-// TODO this doesn't work, need to get working directory of dll
-std::string GetBrxPath() {
-	TCHAR buffer[2048] = { 0 };
-	GetModuleFileName(hDll, buffer, 2048);
-	std::string::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
-	std::wstring path = std::wstring(buffer).substr(0, pos);
-	std::wstring npath = path.replace(path.begin(), path.end(), "\\", "/");
-	return std::string(npath.begin(), npath.end());
+std::string to_unix_path(std::string file_path) {
+	std::replace(file_path.begin(), file_path.end(), '\\', '/');
+	std::transform(file_path.begin(), file_path.begin() + 1, file_path.begin(),
+		[](unsigned char character) {
+		return std::tolower(character);
+	});
+
+	std::stringstream stringstream;
+	stringstream << "/";
+	stringstream << file_path;
+
+	return stringstream.str();
 }
 
+
+std::string GetLoadedDllAsUnixPath() {
+	TCHAR buffer[2048] = { 0 };
+	GetModuleFileName(hDll, buffer, 2048);
+	std::wstring path = std::wstring(buffer);
+	std::wstring::size_type pos = std::wstring(path).find_last_of(L"\\/");
+	path = std::wstring(path).substr(0, pos);
+	return to_unix_path(std::string(path.begin(), path.end()));
+}
 
 
 char* argv;
 char** pargv;
 void static startEcl()
 {
-	//printf(GetBrxPath().c_str());
+	
 	// open a console window to see logging/errors etc, may be able
 	// to remove this or have it optional once system is stabilised.
 	// NOTE!!! - do not close console without calling stopEcl, it 
 	// will crash CAD!
 	CreateConsole(); // sets up FILE* for stdin/out etc
+
 
 	// setup args to pass to ECL boot:
 	argv = (char*)"eclrx-app";
@@ -130,7 +150,11 @@ void static startEcl()
 			0,
 			ecl_make_keyword("UTF-8")));
 
-	lisp("(load \"c:/ECL_RX/initrc.lisp\")", error);
+	// build the path an load init -> e.g lisp("(load \"c:/ECL_RX/initrc.lisp\")", error);
+	std::string initpath = "(load \"";
+	initpath += GetLoadedDllAsUnixPath();
+	initpath += "/initrc.lisp\")";
+	lisp(initpath, error);
 
 	// see if anything was put in 'error' cl_object:
 	if (error != NULL) {
