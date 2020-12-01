@@ -68,18 +68,24 @@ cl_object cad_prompt() {
 	return ecl_make_integer(1);
 }
 
+
+// TODO this doesn't work, need to get working directory of dll
 std::string GetBrxPath() {
 	TCHAR buffer[2048] = { 0 };
 	GetModuleFileName(hDll, buffer, 2048);
-	std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
+	std::string::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
 	std::wstring path = std::wstring(buffer).substr(0, pos);
-	return std::string(path.begin(), path.end());
+	std::wstring npath = path.replace(path.begin(), path.end(), "\\", "/");
+	return std::string(npath.begin(), npath.end());
 }
+
+
 
 char* argv;
 char** pargv;
 void static startEcl()
 {
+	//printf(GetBrxPath().c_str());
 	// open a console window to see logging/errors etc, may be able
 	// to remove this or have it optional once system is stabilised.
 	// NOTE!!! - do not close console without calling stopEcl, it 
@@ -124,13 +130,8 @@ void static startEcl()
 			0,
 			ecl_make_keyword("UTF-8")));
 
-	// get the location of 'this' dll, our initrc.lisp is in the same folder:
-	char cpath[MAX_PATH] = { 0 };
-	std::string spath("(load \"");
-	spath += (GetBrxPath());
-	spath += "\\initrc.lisp\")";
+	lisp("(load \"c:/ECL_RX/initrc.lisp\")", error);
 
-	lisp(spath, error);
 	// see if anything was put in 'error' cl_object:
 	if (error != NULL) {
 		printf("Error in 'load initrc' call. %s", error->base_string.self);
